@@ -1,0 +1,17 @@
+version: "2"
+cloud:
+    project: "01K8XVPCW2YD1NPTHX0VXR32KM"
+sql:
+  - engine: "mysql"
+    schema: "database/schema.sql"
+    queries: "database/queries/**/*.sql"
+    gen:
+      go:
+        package: "database"
+        out: "internal/database"
+        sql_package: "database/sql"
+        sql_driver: "github.com/go-sql-driver/mysql"
+        emit_json_tags: true
+        emit_interface: true
+        emit_pointers_for_null_types: false
+
