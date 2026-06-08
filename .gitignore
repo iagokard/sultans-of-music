@@ -122,7 +122,6 @@ config/credentials/*.key
 
 # Go module files (if not committing)
 go.sum
-go.mod
 
 ### Test Artifacts ###
 # Test specific
