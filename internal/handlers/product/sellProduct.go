@@ -5,39 +5,42 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	dto "som/internal/dto/product"
+	dto "som/internal/dto/sale"
 	"som/internal/handlers"
 	services "som/internal/services/product"
 	"som/internal/util"
 )
 
-// GetProductListPage godoc
-// @summary      Get a paginated list of products.
+// SellProduct godoc
+// @summary      Sell a product.
 // @tags         product
 // @accept       json
 // @produce      json
 // @security     BearerAuth
-// @param        page_request body dto.GetProductListPageRequest true "Pagination parameters (page number, limit)"
-// @success      200 {object} dto.GetProductListResponse "Page of products"
+// @param        sale_info body dto.SellProductRequest true "Product ID and quantity to sell"
+// @success      201 {object} dto.SellProductResponse "Sale created successfully"
 // @failure      400 {object} util.ErrorResponse "Invalid request body"
 // @failure      401 "Unauthorized – missing or invalid token"
+// @failure      409 {object} util.ErrorResponse "Insufficient stock or conflict"
 // @failure      500 {object} util.ErrorResponse "Internal server error"
-// @router       /product/list [post]
-func GetProductListPage(ginContext *gin.Context) {
-	var req dto.GetProductListPageRequest
+// @router       /product/sell [post]
+func SellProduct(ginContext *gin.Context) {
+	var req dto.SellProductRequest
 	if err := ginContext.ShouldBindJSON(&req); err != nil {
 		ginContext.AbortWithStatusJSON(http.StatusBadRequest, util.ErrorResponse{
-			Error:   "invalid request",
+			Error:   "requisição inválida",
 			Details: err.Error(),
 		})
 		return
 	}
 
-	productList, err := services.GetProductListPage(ginContext.Request.Context(), req)
+	saleID, err := services.SellProduct(ginContext.Request.Context(), req)
 	if err != nil {
 		handlers.HandleDBError(ginContext, err)
 		return
 	}
 
-	ginContext.JSON(http.StatusOK, productList)
+	ginContext.JSON(http.StatusCreated, dto.SellProductResponse{
+		SaleID: saleID,
+	})
 }

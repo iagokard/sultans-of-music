@@ -17,7 +17,8 @@ CREATE TABLE artists (
     deleted_at DATETIME NULL,
     
     PRIMARY KEY (id),
-    UNIQUE KEY uk_artist_name (name)
+    UNIQUE KEY uk_artist_name (name),
+    UNIQUE KEY uk_artist_api_id (api_id)
 );
 
 CREATE TABLE product_types (
@@ -49,6 +50,7 @@ CREATE TABLE products (
     deleted_at DATETIME NULL,
     
     PRIMARY KEY (id),
+    UNIQUE KEY uk_artist_title_type (artist_id, title, type_id),
     FOREIGN KEY (type_id) REFERENCES product_types(id) ON DELETE RESTRICT,
     FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE RESTRICT
 );
@@ -61,6 +63,7 @@ CREATE TABLE inventory (
     deleted_at DATETIME NULL,
 
     PRIMARY KEY(id),
+    UNIQUE KEY uk_product_id (product_id),
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
 );
 
@@ -70,7 +73,8 @@ CREATE TABLE inventory_log_type (
 
     deleted_at DATETIME NULL,
 
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+    UNIQUE KEY uk_type_name (type_name)
 );
 
 INSERT INTO inventory_log_type (type_name) VALUES 
@@ -80,6 +84,7 @@ INSERT INTO inventory_log_type (type_name) VALUES
 
 CREATE TABLE inventory_log (
     id INT NOT NULL AUTO_INCREMENT,
+    date_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     product_id INT NOT NULL,
     amount INT NOT NULL,
     type_id INT NOT NULL,

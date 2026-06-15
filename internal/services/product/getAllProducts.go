@@ -3,27 +3,17 @@ package product
 import (
 	"context"
 
-	"som/internal/database"
 	dto "som/internal/dto/product"
 	"som/internal/services"
 )
 
-func GetProductListPage(
+func GetAllProducts(
 	ctx context.Context,
-	req dto.GetProductListPageRequest,
 ) (dto.GetProductListResponse, error) {
 	dbQueries := services.GetDatabaseQueries()
 	var listResponse dto.GetProductListResponse
 
-	limit := max(req.Amount, 1)
-	offset := (req.Page - 1) * limit
-
-	params := database.GetProductsListPageParams{
-		Limit:  int32(limit),
-		Offset: int32(offset),
-	}
-
-	productList, err := dbQueries.GetProductsListPage(ctx, params)
+	productList, err := dbQueries.GetAllProducts(ctx)
 	if err != nil {
 		return listResponse, err
 	}

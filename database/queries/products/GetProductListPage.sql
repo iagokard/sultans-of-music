@@ -18,6 +18,5 @@ LEFT JOIN inventory i ON p.id = i.product_id AND i.deleted_at IS NULL
 WHERE p.deleted_at IS NULL
   AND a.deleted_at IS NULL
   AND pt.deleted_at IS NULL
-ORDER BY a.name
 LIMIT ?
 OFFSET ?;

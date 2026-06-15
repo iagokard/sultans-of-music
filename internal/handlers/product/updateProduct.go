@@ -11,33 +11,34 @@ import (
 	"som/internal/util"
 )
 
-// GetProductListPage godoc
-// @summary      Get a paginated list of products.
+// UpdateProduct godoc
+// @summary      Update an existing product.
 // @tags         product
 // @accept       json
 // @produce      json
 // @security     BearerAuth
-// @param        page_request body dto.GetProductListPageRequest true "Pagination parameters (page number, limit)"
-// @success      200 {object} dto.GetProductListResponse "Page of products"
+// @param        update_info body dto.UpdateProductRequest true "Product fields to update (all optional)"
+// @success      200 "Product updated successfully"
 // @failure      400 {object} util.ErrorResponse "Invalid request body"
 // @failure      401 "Unauthorized – missing or invalid token"
+// @failure      404 {object} util.ErrorResponse "Product not found"
 // @failure      500 {object} util.ErrorResponse "Internal server error"
-// @router       /product/list [post]
-func GetProductListPage(ginContext *gin.Context) {
-	var req dto.GetProductListPageRequest
+// @router       /product/update [put]
+func UpdateProduct(ginContext *gin.Context) {
+	var req dto.UpdateProductRequest
 	if err := ginContext.ShouldBindJSON(&req); err != nil {
 		ginContext.AbortWithStatusJSON(http.StatusBadRequest, util.ErrorResponse{
-			Error:   "invalid request",
+			Error:   "requisição inválida",
 			Details: err.Error(),
 		})
 		return
 	}
 
-	productList, err := services.GetProductListPage(ginContext.Request.Context(), req)
+	err := services.UpdateProduct(ginContext.Request.Context(), req)
 	if err != nil {
 		handlers.HandleDBError(ginContext, err)
 		return
 	}
 
-	ginContext.JSON(http.StatusOK, productList)
+	ginContext.Status(http.StatusOK)
 }

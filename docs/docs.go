@@ -71,6 +71,95 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/update": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inventory"
+                ],
+                "summary": "Update a product's stock to a new absolute value.",
+                "parameters": [
+                    {
+                        "description": "Product ID and new stock value",
+                        "name": "inventory_update",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateInventoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inventory updated successfully"
+                    },
+                    "400": {
+                        "description": "Invalid request body or negative stock",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized – missing or invalid token"
+                    },
+                    "404": {
+                        "description": "Inventory row not found",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Get all products.",
+                "responses": {
+                    "200": {
+                        "description": "List of all products",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetProductListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized – missing or invalid token"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/product/create": {
             "post": {
                 "security": [
@@ -159,7 +248,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Page of products",
                         "schema": {
-                            "$ref": "#/definitions/dto.GetProductListPageResponse"
+                            "$ref": "#/definitions/dto.GetProductListResponse"
                         }
                     },
                     "400": {
@@ -170,6 +259,121 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized – missing or invalid token"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/sell": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Sell a product.",
+                "parameters": [
+                    {
+                        "description": "Product ID and quantity to sell",
+                        "name": "sale_info",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SellProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Sale created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SellProductResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized – missing or invalid token"
+                    },
+                    "409": {
+                        "description": "Insufficient stock or conflict",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/update": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Update an existing product.",
+                "parameters": [
+                    {
+                        "description": "Product fields to update (all optional)",
+                        "name": "update_info",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product updated successfully"
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized – missing or invalid token"
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal server error",
@@ -221,6 +425,96 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Product not found",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale"
+                ],
+                "summary": "Get all sales.",
+                "responses": {
+                    "200": {
+                        "description": "List of all sales",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.GetSaleResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized – missing or invalid token"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sale"
+                ],
+                "summary": "Get sale by ID.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Sale ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sale found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetSaleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied",
+                        "schema": {
+                            "$ref": "#/definitions/util.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized – missing or invalid token"
+                    },
+                    "404": {
+                        "description": "Sale not found",
                         "schema": {
                             "$ref": "#/definitions/util.ErrorResponse"
                         }
@@ -422,7 +716,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "api-id",
-                "artist",
+                "artist-api-id",
+                "artist-name",
                 "cover",
                 "price",
                 "release_date",
@@ -434,7 +729,10 @@ const docTemplate = `{
                 "api-id": {
                     "type": "string"
                 },
-                "artist": {
+                "artist-api-id": {
+                    "type": "string"
+                },
+                "artist-name": {
                     "type": "string"
                 },
                 "cover": {
@@ -487,7 +785,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.GetProductListPageResponse": {
+        "dto.GetProductListResponse": {
             "type": "object",
             "required": [
                 "product-list"
@@ -552,6 +850,23 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.GetSaleResponse": {
+            "type": "object",
+            "properties": {
+                "date-time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.SaleItemInfo"
+                    }
+                }
+            }
+        },
         "dto.GetUserResponse": {
             "type": "object",
             "required": [
@@ -590,6 +905,121 @@ const docTemplate = `{
             "properties": {
                 "jwt-token": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.SaleItemInfo": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "artist": {
+                    "type": "string"
+                },
+                "artist-id": {
+                    "type": "integer"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "product-id": {
+                    "type": "integer"
+                },
+                "product-title": {
+                    "type": "string"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "type-id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.SaleRequestInfo": {
+            "type": "object",
+            "required": [
+                "product-id",
+                "sale-amount"
+            ],
+            "properties": {
+                "product-id": {
+                    "type": "integer"
+                },
+                "sale-amount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.SellProductRequest": {
+            "type": "object",
+            "required": [
+                "sale-items"
+            ],
+            "properties": {
+                "sale-items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.SaleRequestInfo"
+                    }
+                }
+            }
+        },
+        "dto.SellProductResponse": {
+            "type": "object",
+            "properties": {
+                "sale-id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UpdateInventoryRequest": {
+            "type": "object",
+            "properties": {
+                "new-stock": {
+                    "type": "integer"
+                },
+                "product-id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UpdateProductRequest": {
+            "type": "object",
+            "properties": {
+                "api-id": {
+                    "type": "string"
+                },
+                "artist-api-id": {
+                    "type": "string"
+                },
+                "artist-name": {
+                    "type": "string"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "product-id": {
+                    "type": "integer"
+                },
+                "release_date": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type-id": {
+                    "type": "integer"
                 }
             }
         },

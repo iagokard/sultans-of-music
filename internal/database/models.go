@@ -24,6 +24,7 @@ type Inventory struct {
 
 type InventoryLog struct {
 	ID        int32        `json:"id"`
+	DateTime  sql.NullTime `json:"date_time"`
 	ProductID int32        `json:"product_id"`
 	Amount    int32        `json:"amount"`
 	TypeID    int32        `json:"type_id"`

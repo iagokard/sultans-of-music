@@ -1,5 +1,5 @@
 package dto
 
-type GetProductListPageResponse struct {
+type GetProductListResponse struct {
 	ProductList []GetProductResponse `json:"product-list" binding:"required"`
 }

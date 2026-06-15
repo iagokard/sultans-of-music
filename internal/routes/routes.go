@@ -9,6 +9,7 @@ import (
 
 	artistHandler "som/internal/handlers/artist"
 	productHandler "som/internal/handlers/product"
+	saleHandler "som/internal/handlers/sale"
 	userHandler "som/internal/handlers/user"
 
 	"github.com/gin-gonic/gin"
@@ -45,18 +46,37 @@ func RegisterRoutes(router *gin.Engine) {
 
 		product.POST("/create", productHandler.CreateProduct)
 		product.POST("/list", productHandler.GetProductListPage)
+		product.POST("/sell", productHandler.SellProduct)
+		product.PUT("/update", productHandler.UpdateProduct)
+		product.GET("/all", productHandler.GetAllProducts)
 		product.GET("/:id", productHandler.GetProductByID)
+	}
+
+	{
+		inventory := api.Group("/inventory")
+
+		inventory.Use(middleware.JWT(cfg.JWTSecret))
+
+		inventory.PUT("/update", productHandler.UpdateInventory)
 	}
 
 	{
 		user := api.Group("/user")
 
 		user.POST("/login", userHandler.LoginUser)
+		user.POST("/create", userHandler.CreateUser)
 
 		user.Use(middleware.JWT(cfg.JWTSecret))
 
-		user.POST("/create", userHandler.CreateUser)
 		user.GET("/:id", userHandler.GetUserByID)
 	}
 
+	{
+		sale := api.Group("/sale")
+
+		sale.Use(middleware.JWT(cfg.JWTSecret))
+
+		sale.GET("/:id", saleHandler.GetSaleByID)
+		sale.GET("/all", saleHandler.GetAllSales)
+	}
 }
